@@ -24,16 +24,16 @@ include("periodic.jl")
 include("Cross_Link.jl")
 include("Myosin_Motor.jl")
 include("intersection_search.jl")
-include("spatial_statistics.jl")
+include("network_statistics.jl")
 include("network_force.jl")
 include("draw_network.jl")
 include("optimise_network.jl")
 include("energy.jl")
 
 # Specify parameters
-parN = Numerical_Parameters(xTol = 0, fTol = 0, nT = 201); # Initialise struct of numerical parameters
-parA = Actin_Properties(nSeg = 1, LSeg = 1.0, lambda_a = 10, k = 100000000); # Initialise struct of actin filament properties
-parM = Myosin_Properties(k = 100000000); # Initialise struct of myosin motor properties
+parN = Numerical_Parameters(); # Initialise struct of numerical parameters
+parA = Actin_Properties(nSeg = 1, LSeg = 1.0); # Initialise struct of actin filament properties
+parM = Myosin_Properties(); # Initialise struct of myosin motor properties
 
 # Run simulations
-@time state, af, mm, xl, Force, Curvature, Dipole = actomyosin_network(parN, parA, parM);
+@time state, af, mm, xl, Force, Curvature, Index = actomyosin_network(parN, parA, parM);

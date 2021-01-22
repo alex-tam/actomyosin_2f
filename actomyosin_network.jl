@@ -8,9 +8,9 @@ function actomyosin_network(parN, parA, parM)
     Lxx::Float64 = 2; Lxy::Float64 = 0; Lyx::Float64 = 0; Lyy::Float64 = 2; # Actual domain widths
     # Pre-allocate
     Force = [[0.0, 0.0, 0.0, 0.0] for idx in 1:parN.nT]; # [pN] Network force
-    Curvature = [0.0 for idx in 1:parN.nT]; # Mean network curvature
-    Dipole_Index = [0.0 for idx in 1:parN.nT]; # Mean dipole index
-    Theta = [0.0 for idx in 1:parN.nT]; # Dipole angle
+    Curvature = [0.0 for idx in 1:parN.nT]; # Mean filament curvature
+    Index = [0.0 for idx in 1:parN.nT]; # Two-filament index
+    Theta = [0.0 for idx in 1:parN.nT]; # Angle between filaments
     # Generate initial conditions
     state = State{Float64}(Vector{Vector{Vector}}(), Vector{Vector}()); # Initialise empty State struct
     mm = Vector{Myosin_Motor}(); # Pre-allocate empty myosin motors
@@ -26,13 +26,11 @@ function actomyosin_network(parN, parA, parM)
         else
             Curvature[i] = 0;
         end
-        Dipole_Index[i], Theta[i] = dipole_index(mm, state, parN, Lxx, Lxy, Lyx, Lyy); # Compute mean dipole index at current time step
+        Index[i], Theta[i] = two_filament_index(mm, state, parN, Lxx, Lxy, Lyx, Lyy); # Compute two-filament index at current time step
         # Compute force and draw network
         Force[i] = network_force(state, state_old, af, xl, mm, parN, parA, parM, Lxx, Lxy, Lyx, Lyy);
         draw_network(state, af, xl, mm, parN, parA, Force[i], Lxx, Lxy, Lyx, Lyy);
-        if i == 1
-            savefig("2f_ic.png"); # Save image of initial condition
-        end
+        savefig("2f-$i.svg"); # Save image of initial condition
         if i != parN.nT # Ensure correct looping sequence
             # Turnover and polymerisation
             af = segment_translations(state, af); # Update filament translations
@@ -45,14 +43,14 @@ function actomyosin_network(parN, parA, parM)
     end
     # Output
     gif(animation, "2f.gif", fps = 50) # Save .gif of the network
-    savefig("2f_end.png");
-    draw_tension(parN, Force, parN.nT);
-    savefig("2f_tension.png");
+    # savefig("2f_end.svg");
+    draw_stress(parN, Force, parN.nT);
+    savefig("2f_stress.svg");
     draw_angle(parN, Theta, parN.nT);
-    savefig("2f_angle.png");
-    Curvature_Int, Dipole_Int = draw_tension_spatial(parN, Force, parN.nT, Curvature, Dipole_Index)
-    savefig("2f_tension_spatial.png");
+    savefig("2f_angle.svg");
+    Curvature_Int, Index_Int = draw_stress_spatial(parN, Force, parN.nT, Curvature, Index)
+    savefig("2f_stress_spatial.svg");
     draw_force(parN, Force, parN.nT);
-    savefig("2f_force.png");
-    return state, af, mm, xl, Force, Curvature_Int, Dipole_Int
+    savefig("2f_force.svg");
+    return state, af, mm, xl, Force, Curvature_Int, Index_Int
 end
