@@ -4,6 +4,7 @@
 "Draw the network configuration"
 function draw_network(s, af, xl, mm, parN, parA, Force, Lxx, Lxy, Lyx, Lyy)
     gr(); plot(); # Load GR plotting back-end and clear previous plots
+    default(titlefont = (18, "times"), guidefont = (26, "times"), tickfont = (18, "times"))
     # Actin Filaments
     fx = zeros(Float64, parA.nSeg+1, length(af));
     fy = zeros(Float64, parA.nSeg+1, length(af)); # Pre-allocate un-translated filament node positions
@@ -60,32 +61,34 @@ function draw_network(s, af, xl, mm, parN, parA, Force, Lxx, Lxy, Lyx, Lyy)
     m1y = Vector{Float64}(); tm1y = Vector{Float64}();
     m2x = Vector{Float64}(); tm2x = Vector{Float64}();
     m2y = Vector{Float64}(); tm2y = Vector{Float64}();
-    for m in mm
-        x1, y1, x2, y2 = get_motor_pos(m, s, Lxx, Lxy, Lyx, Lyy); # Obtain motor positions (dimensionless, un-translated)
-        # Convert to dimensional, translated positions
-        mx1 = (x1 - m.t1[1]*Lxx/parN.lxx - m.t1[2]*Lyx/parN.lxx)*Lxx + (y1 - m.t1[1]*Lxy/parN.lyy - m.t1[2]*Lyy/parN.lyy)*Lyx;
-        my1 = (y1 - m.t1[1]*Lxy/parN.lyy - m.t1[2]*Lyy/parN.lyy)*Lyy + (x1 - m.t1[1]*Lxx/parN.lxx - m.t1[2]*Lyx/parN.lxx)*Lxy;
-        mx2 = (x2 - m.t2[1]*Lxx/parN.lxx - m.t2[2]*Lyx/parN.lxx)*Lxx + (y2 - m.t2[1]*Lxy/parN.lyy - m.t2[2]*Lyy/parN.lyy)*Lyx;
-        my2 = (y2 - m.t2[1]*Lxy/parN.lyy - m.t2[2]*Lyy/parN.lyy)*Lyy + (x2 - m.t2[1]*Lxx/parN.lxx - m.t2[2]*Lyx/parN.lxx)*Lxy;
-        # Compute translations for visualisation only
-        myosin_translations = periodic([mx1/parN.lxx, my1/parN.lyy], [mx2/parN.lxx, my2/parN.lyy]);
-        for j = 1:length(myosin_translations)
-            if j == 1
-                push!(m1x, mx1); push!(m1y, my1); push!(m2x, mx2); push!(m2y, my2);
-            else
-                t = myosin_translations[j];
-                # Store dimensional, translated positions
-                push!(tm1x, mx1 - (t[1]*Lxx + t[2]*Lyx)); 
-                push!(tm1y, my1 - (t[1]*Lxy + t[2]*Lyy));
-                push!(tm2x, mx2 - (t[1]*Lxx + t[2]*Lyx)); 
-                push!(tm2y, my2 - (t[1]*Lxy + t[2]*Lyy));
+    if all(s.mp[1] .<= 1)
+        for m in mm
+            x1, y1, x2, y2 = get_motor_pos(m, s, Lxx, Lxy, Lyx, Lyy); # Obtain motor positions (dimensionless, un-translated)
+            # Convert to dimensional, translated positions
+            mx1 = (x1 - m.t1[1]*Lxx/parN.lxx - m.t1[2]*Lyx/parN.lxx)*Lxx + (y1 - m.t1[1]*Lxy/parN.lyy - m.t1[2]*Lyy/parN.lyy)*Lyx;
+            my1 = (y1 - m.t1[1]*Lxy/parN.lyy - m.t1[2]*Lyy/parN.lyy)*Lyy + (x1 - m.t1[1]*Lxx/parN.lxx - m.t1[2]*Lyx/parN.lxx)*Lxy;
+            mx2 = (x2 - m.t2[1]*Lxx/parN.lxx - m.t2[2]*Lyx/parN.lxx)*Lxx + (y2 - m.t2[1]*Lxy/parN.lyy - m.t2[2]*Lyy/parN.lyy)*Lyx;
+            my2 = (y2 - m.t2[1]*Lxy/parN.lyy - m.t2[2]*Lyy/parN.lyy)*Lyy + (x2 - m.t2[1]*Lxx/parN.lxx - m.t2[2]*Lyx/parN.lxx)*Lxy;
+            # Compute translations for visualisation only
+            myosin_translations = periodic([mx1/parN.lxx, my1/parN.lyy], [mx2/parN.lxx, my2/parN.lyy]);
+            for j = 1:length(myosin_translations)
+                if j == 1
+                    push!(m1x, mx1); push!(m1y, my1); push!(m2x, mx2); push!(m2y, my2);
+                else
+                    t = myosin_translations[j];
+                    # Store dimensional, translated positions
+                    push!(tm1x, mx1 - (t[1]*Lxx + t[2]*Lyx)); 
+                    push!(tm1y, my1 - (t[1]*Lxy + t[2]*Lyy));
+                    push!(tm2x, mx2 - (t[1]*Lxx + t[2]*Lyx)); 
+                    push!(tm2y, my2 - (t[1]*Lxy + t[2]*Lyy));
+                end
             end
         end
+        scatter!([m1x, m2x], [m1y, m2y], color = "blue"); # Plot binding sites as points
+        scatter!([tm1x, tm2x], [tm1y, tm2y], color = "orange"); # Plot binding sites as points
+        plot!(transpose(hcat(m1x, m2x)), transpose(hcat(m1y, m2y)), color = "blue") # Draw motors
+        plot!(transpose(hcat(tm1x, tm2x)), transpose(hcat(tm1y, tm2y)), color = "orange") # Draw projected motors
     end
-    scatter!([m1x, m2x], [m1y, m2y], color = "blue"); # Plot binding sites as points
-    scatter!([tm1x, tm2x], [tm1y, tm2y], color = "orange"); # Plot binding sites as points
-    plot!(transpose(hcat(m1x, m2x)), transpose(hcat(m1y, m2y)), color = "blue") # Draw motors
-    plot!(transpose(hcat(tm1x, tm2x)), transpose(hcat(tm1y, tm2y)), color = "orange") # Draw projected motors
     # Principal stress directions
     Stress = [ Force[1]/parN.lxx Force[2]/parN.lyy ; Force[3]/parN.lxx Force[4]/parN.lyy ]; # Compute stress tensor
     evals = eigvals(Stress); evecs = eigvecs(Stress);# Compute eigenvalues and eigenvectors
@@ -103,20 +106,23 @@ end
 
 "Plot force components"
 function draw_force(parN, Force, time_step)
-    cfxx = Vector{Float64}(); # Pre-allocate vector for force component (x)
-    cfxy = Vector{Float64}(); # Pre-allocate vector for force component (y)
-    cfyx = Vector{Float64}(); # Pre-allocate vector for force component (y)
-    cfyy = Vector{Float64}(); # Pre-allocate vector for force component (
-    cfxx_tot = Vector{Float64}(); # Pre-allocate vector for force component (x)
-    cfxy_tot = Vector{Float64}(); # Pre-allocate vector for force component (y)
-    cfyx_tot = Vector{Float64}(); # Pre-allocate vector for force component (x)
-    cfyy_tot = Vector{Float64}(); # Pre-allocate vector for force component (x)
+    gr(); plot(); # Load GR plotting back-end and clear previous plots
+    default(titlefont = (18, "times"), guidefont = (26, "times"), tickfont = (18, "times"))
+    # Pre-allocate
+    cfxx = Vector{Float64}(); # Pre-allocate vector for force component (xx)
+    cfxy = Vector{Float64}(); # Pre-allocate vector for force component (xy)
+    cfyx = Vector{Float64}(); # Pre-allocate vector for force component (yx)
+    cfyy = Vector{Float64}(); # Pre-allocate vector for force component (yy)
+    cfxx_tot = Vector{Float64}(); # Pre-allocate vector for force component (xx)
+    cfxy_tot = Vector{Float64}(); # Pre-allocate vector for force component (xy)
+    cfyx_tot = Vector{Float64}(); # Pre-allocate vector for force component (yx)
+    cfyy_tot = Vector{Float64}(); # Pre-allocate vector for force component (yy)
     times = (0:time_step-1).*parN.dt; # Vector of times at which we obtain measurements
     for i = 1:time_step
-        push!(cfxx, Force[i][1]); # Construct vector for force component (x)
-        push!(cfxy, Force[i][2]); # Construct vector for force component (y)
-        push!(cfyx, Force[i][3]); # Construct vector for force component (y)
-        push!(cfyy, Force[i][4]); # Construct vector for force component (y)
+        push!(cfxx, Force[i][1]); # Construct vector for force component (xx)
+        push!(cfxy, Force[i][2]); # Construct vector for force component (xy)
+        push!(cfyx, Force[i][3]); # Construct vector for force component (yx)
+        push!(cfyy, Force[i][4]); # Construct vector for force component (yy)
         push!(cfxx_tot, trapz(cfxx, times)); # Integrate force over time
         push!(cfxy_tot, trapz(cfxy, times)); # Integrate force over time
         push!(cfyx_tot, trapz(cfyx, times)); # Integrate force over time
@@ -141,6 +147,8 @@ end
 
 "Plot stress"
 function draw_stress(parN, Force, time_step)
+    gr(); plot(); # Load GR plotting back-end and clear previous plots
+    default(titlefont = (18, "times"), guidefont = (26, "times"), tickfont = (18, "times"))
     Bulk_Stress = Vector{Float64}(); Bulk_Stress_Int = Vector{Float64}(); # Pre-allocate
     times = (0:parN.nT-1).*parN.dt; # Vector of times at which we obtain measurements
     for i = 1:parN.nT
@@ -156,12 +164,16 @@ end
 
 "Plot angle"
 function draw_angle(parN, Theta, time_step)
+    gr(); plot(); # Load GR plotting back-end and clear previous plots
+    default(titlefont = (18, "times"), guidefont = (26, "times"), tickfont = (18, "times"))
     times = (0:parN.nT-1).*parN.dt; # Vector of times at which we obtain measurements
     plot(times[1:time_step], Theta[1:time_step], linewidth = 2, label =:false, xlabel = L"$t$", ylabel = L"$\theta$", ylims = [0, pi]);
 end
 
 "Plot stress with spatial measures"
 function draw_stress_spatial(parN, Force, time_step, Curvature, Dipole_Index)
+    gr(); plot(); # Load GR plotting back-end and clear previous plots
+    default(titlefont = (18, "times"), guidefont = (26, "times"), tickfont = (18, "times"))
     Bulk_Stress = Vector{Float64}(); # Pre-allocate bulk stress
     Bulk_Stress_Int = Vector{Float64}(); Curvature_Int = Vector{Float64}(); Dipole_Int = Vector{Float64}(); # Pre-allocate time-integrated variables
     times = (0:parN.nT-1).*parN.dt; # Vector of times at which we obtain measurements
