@@ -62,7 +62,7 @@ function two_filament_index(mm, s, parN, Lxx, Lxy, Lyx, Lyy)
         theta = acos( (vec1[1]*vec2[1] + vec1[2]*vec2[2])/( sqrt(vec1[1]^2 + vec1[2]^2)*sqrt(vec2[1]^2 + vec2[2]^2) ) ); # Angle between vectors
         # Compute index
         if all(s.mp[i] .<=1)
-            Id = ( 2*(L1*s.mp[i][1] + L2*s.mp[i][2])/(L1+L2) - 1)*(1-cos(theta/2)); # Heuristic index based on four filament branches
+            Id = ( 2*(L1*s.mp[i][1] + L2*s.mp[i][2])/(L1+L2) - 1)*(1-cos(theta/2)^2); # Heuristic index based on four filament branches
         else
             Id = 0; # Return zero if motor is detached
         end
