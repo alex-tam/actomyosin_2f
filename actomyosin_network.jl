@@ -5,7 +5,7 @@
 "Control function for actomyosin network simulations"
 function actomyosin_network(parN, parA, parM)
     # Specify domain width
-    Lxx::Float64 = 2; Lxy::Float64 = 0; Lyx::Float64 = 0; Lyy::Float64 = 2; # Actual domain widths
+    Lxx::Float64 = 2.0; Lxy::Float64 = 0; Lyx::Float64 = 0; Lyy::Float64 = 2.0; # Actual domain widths
     # Pre-allocate
     Force = [[0.0, 0.0, 0.0, 0.0] for idx in 1:parN.nT]; # [pN] Network force
     Curvature = [0.0 for idx in 1:parN.nT]; # Mean filament curvature
