@@ -20,7 +20,7 @@ mutable struct Actin_Filament
             segments[i] = Segment(i, parA.LSeg, []); # Create segments
         end
         # 2. Generate centre position and orientation
-        angle = pi/4 + (ind-1)*pi/2; # Prescribe actin filament orientation
+        angle = pi/16 + (ind-1)*pi/2; # Prescribe actin filament orientation
         # 3. Calculate minus end position
         nodes = Vector{}(undef, parA.nSeg+1); # Pre-allocate
         nx = 0.5; ny = 0.5; # Dimensionless actin filament minus end position
@@ -78,10 +78,10 @@ function get_segment_nodes(f::Actin_Filament, seg::Segment, s::State{T}, Lxx, Lx
 end
 
 "Obtain dimensional, translated node positions"
-function get_segment_nodes(f::Actin_Filament, seg::Segment, s::State{T}, t::Vector{Int}, parN, Lxx, Lxy, Lyx, Lyy) where {T}
-    mx = (s.an[f.index][seg.index][1] - t[1]*Lxx/parN.lxx - t[2]*Lyx/parN.lxx)*Lxx + (s.an[f.index][seg.index][2] - t[1]*Lxy/parN.lyy - t[2]*Lyy/parN.lyy)*Lyx;
-    my = (s.an[f.index][seg.index][2] - t[1]*Lxy/parN.lyy - t[2]*Lyy/parN.lyy)*Lyy + (s.an[f.index][seg.index][1] - t[1]*Lxx/parN.lxx - t[2]*Lyx/parN.lxx)*Lxy;
-    px = (s.an[f.index][seg.index+1][1] - t[1]*Lxx/parN.lxx - t[2]*Lyx/parN.lxx)*Lxx + (s.an[f.index][seg.index+1][2] - t[1]*Lxy/parN.lyy - t[2]*Lyy/parN.lyy)*Lyx;
-    py = (s.an[f.index][seg.index+1][2] - t[1]*Lxy/parN.lyy - t[2]*Lyy/parN.lyy)*Lyy + (s.an[f.index][seg.index+1][1] - t[1]*Lxx/parN.lxx - t[2]*Lyx/parN.lxx)*Lxy;
+function get_segment_nodes(f::Actin_Filament, seg::Segment, s::State{T}, t::Vector{Int}, Lxx, Lxy, Lyx, Lyy) where {T}
+    mx = (s.an[f.index][seg.index][1] - t[1])*Lxx + (s.an[f.index][seg.index][2] - t[2])*Lyx;
+    my = (s.an[f.index][seg.index][1] - t[1])*Lxy + (s.an[f.index][seg.index][2] - t[2])*Lyy;
+    px = (s.an[f.index][seg.index+1][1] - t[1])*Lxx + (s.an[f.index][seg.index+1][2] - t[2])*Lyx;
+    py = (s.an[f.index][seg.index+1][1] - t[1])*Lxy + (s.an[f.index][seg.index+1][2] - t[2])*Lyy;
     return mx, my, px, py
 end
