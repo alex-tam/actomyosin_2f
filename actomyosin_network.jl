@@ -26,7 +26,7 @@ function actomyosin_network(parN, parA, parM)
         else
             Curvature[i] = 0;
         end
-        Index[i], Theta[i] = two_filament_index(mm, state, parN, Lxx, Lxy, Lyx, Lyy); # Compute two-filament index at current time step
+        Index[i], Theta[i] = two_filament_index(mm, state, Lxx, Lxy, Lyx, Lyy); # Compute two-filament index at current time step
         # Compute force and draw network
         Force[i] = network_force(state, state_old, af, xl, mm, parN, parA, parM, Lxx, Lxy, Lyx, Lyy);
         draw_network(state, af, xl, mm, parN, parA, Force[i], Lxx, Lxy, Lyx, Lyy);
