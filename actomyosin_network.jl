@@ -43,14 +43,11 @@ function actomyosin_network(parN, parA, parM)
     end
     # Output
     gif(animation, "2f.gif", fps = 50) # Save .gif of the network
-    # savefig("2f_end.svg");
-    draw_bulk_stress(parN, Force, parN.nT, Lxx, Lyy);
-    savefig("2f_stress.svg");
-    draw_angle(parN, Theta, parN.nT);
-    savefig("2f_angle.svg");
-    Curvature_Int, Index_Int = draw_stress_spatial(parN, Force, parN.nT, Curvature, Index, Lxx, Lyy)
-    savefig("2f_stress_spatial.svg");
-    draw_force(parN, Force, parN.nT);
-    savefig("2f_force.svg");
+    # Plot quantities versus time
+    draw_stress(parN, Force, parN.nT, Lxx, Lyy); savefig("2f_stress.svg"); # Stress components
+    draw_bulk_stress(parN, Force, parN.nT, Lxx, Lyy); savefig("2f_bulk_stress.svg"); # Bulk stress
+    draw_angle(parN, Theta, parN.nT); savefig("2f_angle.svg"); # Angle
+    # Compute time-integrated statistics
+    Curvature_Int, Index_Int = integrated_statistics(parN, Curvature, Index);
     return state, af, mm, xl, Force, Curvature_Int, Index_Int
 end
