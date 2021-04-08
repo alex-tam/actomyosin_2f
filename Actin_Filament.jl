@@ -20,7 +20,7 @@ mutable struct Actin_Filament
             segments[i] = Segment(i, parA.LSeg, []); # Create segments
         end
         # 2. Generate centre position and orientation
-        angle = pi/16 + (ind-1)*pi/2; # Prescribe actin filament orientation
+        angle = pi/4 + (ind-1)*pi/2; # Prescribe actin filament orientation
         # 3. Calculate minus end position
         nodes = Vector{}(undef, parA.nSeg+1); # Pre-allocate
         nx = 0.5; ny = 0.5; # Dimensionless actin filament minus end position
@@ -47,6 +47,13 @@ function get_segment_lengths(f::Actin_Filament, s::State{T}, Lxx, Lxy, Lyx, Lyy)
         mx, my, px, py = get_segment_nodes(f, seg, s, Lxx, Lxy, Lyx, Lyy); # Obtain segment nodes (dimensional, un-translated)
         Ls[seg.index] = sqrt((px - mx)^2 + (py - my)^2); # Compute segment length
     end
+    return Ls
+end
+
+"Obtain dimensional length of a particular segment"
+function get_segment_length(f::Actin_Filament, s::State{T}, seg::Segment, Lxx, Lxy, Lyx, Lyy) where {T}
+    mx, my, px, py = get_segment_nodes(f, seg, s, Lxx, Lxy, Lyx, Lyy); # Obtain segment nodes (dimensional, un-translated)
+    Ls = sqrt((px - mx)^2 + (py - my)^2); # Compute segment length
     return Ls
 end
 

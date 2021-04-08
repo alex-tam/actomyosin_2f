@@ -22,7 +22,7 @@ end
     k::Float64 = 1000 # [pN/μm] Spring constant
     lambda_a::Float64 = 10 # [pN/(μm^2)*s] Actin-background drag coefficient
     kappa::Float64 = 0.073 # [pN*μm^2] Flexural rigidity
-    lambda_xl::Float64 = 0.0 # [pN/μm*s] Cross-linker drag coefficient
+    lambda_pf::Float64 = 0.0 # [pN/μm*s] Cross-linker drag coefficient
     k_off::Float64 = 0.0 # [/filament/s] Turnover rate
     k_p::Float64 = 0.0 # [/filament/s] Polymerisation rate
 end
