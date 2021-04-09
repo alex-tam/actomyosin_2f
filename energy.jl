@@ -10,9 +10,9 @@ function energy_functional(x::Vector{T}, s_old::State{Float64}, af, xl, mm, parN
         energy += energy_actin_drag(f, s, s_old, parN, parA, Lxx, Lxy, Lyx, Lyy);
         energy += energy_actin_bending(f, s, parA, Lxx, Lxy, Lyx, Lyy);
     end
-    for l in xl
-        energy += energy_cross_link(l, s, parN, parA, Lxx, Lxy, Lyx, Lyy)
-    end
+    # for l in xl
+    #     energy += energy_cross_link(l, s, parN, parA, Lxx, Lxy, Lyx, Lyy)
+    # end
     if all(s_old.mp[1] .<=1) 
         for m in mm
             energy += energy_myosin_spring(m, s, parM, Lxx, Lxy, Lyx, Lyy);

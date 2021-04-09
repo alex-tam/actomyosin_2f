@@ -32,7 +32,7 @@ include("energy.jl")
 
 # Specify parameters
 parN = Numerical_Parameters(); # Initialise struct of numerical parameters
-parA = Actin_Properties(nSeg = 1, LSeg = 1.0); # Initialise struct of actin filament properties
+parA = Actin_Properties(); # Initialise struct of actin filament properties
 parM = Myosin_Properties(); # Initialise struct of myosin motor properties
 
 # Run simulations
