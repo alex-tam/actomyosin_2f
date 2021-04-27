@@ -17,8 +17,8 @@ end
 
 "Actin filament properties"
 @with_kw struct Actin_Properties
-    nSeg::Int = 5; # [-] Number of segments
-    LSeg::Float64 = 0.2 # [μm] Equilibrium segment length
+    nSeg::Int = 20; # [-] Number of segments
+    LSeg::Float64 = 0.05 # [μm] Equilibrium segment length
     k::Float64 = 1000 # [pN/μm] Spring constant
     lambda_a::Float64 = 10 # [pN/(μm^2)*s] Actin-background drag coefficient
     kappa::Float64 = 0.073 # [pN*μm^2] Flexural rigidity

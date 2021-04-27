@@ -150,6 +150,7 @@ end
 function integrated_statistics(parN, Curvature, Index)
     Curvature_Int = Vector{Float64}(); Index_Int = Vector{Float64}(); # Pre-allocate time-integrated variables
     times = (0:parN.nT-1).*parN.dt; # Vector of times at which we obtain measurements
+    writedlm("times.csv", times);
     for i = 1:parN.nT
         push!(Curvature_Int, trapz(Curvature, times)); # Integrate force over time
         push!(Index_Int, trapz(Index, times)); # Integrate force over time
