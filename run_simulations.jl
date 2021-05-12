@@ -37,4 +37,4 @@ parA = Actin_Properties(nSeg = 1, LSeg = 1.0); # Initialise struct of actin fila
 parM = Myosin_Properties(); # Initialise struct of myosin motor properties
 
 # Run simulations
-@time state, af, mm, xl, Force, Curvature, Index = actomyosin_network(parN, parA, parM);
+@time state, af, mm, Force, Curvature, Index = actomyosin_network(parN, parA, parM);

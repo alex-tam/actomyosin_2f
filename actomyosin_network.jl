@@ -24,7 +24,7 @@ function actomyosin_network(parN, parA, parM)
     animation = @animate for i = 1:parN.nT
         # Compute force and draw network
         Force[i] = network_force(state, state_old, af, xl, mm, parN, parA, parM, Lxx, Lxy, Lyx, Lyy);
-        draw_network(state, af, xl, mm, parN, parA, Force[i], Lxx, Lxy, Lyx, Lyy);
+        draw_network(state, af, mm, parN, parA, Force[i], Lxx, Lxy, Lyx, Lyy);
         savefig("2f-$i.svg"); # Save image
         # Spatial statistics
         if parA.nSeg > 1
@@ -38,11 +38,10 @@ function actomyosin_network(parN, parA, parM)
         # Compute solution
         if i != parN.nT # Ensure correct looping sequence
             # Turnover and polymerisation
-            af = segment_translations(state, af); # Update filament translations
-            xl = intersection_search(state, af, mm); # Update cross-links            
+            af = segment_translations(state, af); # Update filament translations       
             state_old = state; # Store current state for energy functional
             # Compute network solution
-            new_dof = optimise_network(state_old, af, xl, mm, parN, parA, parM, Lxx, Lxy, Lyx, Lyy);
+            new_dof = optimise_network(state_old, af, mm, parN, parA, parM, Lxx, Lxy, Lyx, Lyy);
             state = build_state(new_dof, af, mm); # Construct State from vector
         end
     end
@@ -59,5 +58,5 @@ function actomyosin_network(parN, parA, parM)
     writedlm("2f_motor_pos.csv", Motor_Pos);
     # Compute time-integrated statistics
     Curvature_Int, Index_Int = integrated_statistics(parN, Curvature, Index);
-    return state, af, mm, xl, Force, Curvature_Int, Index_Int
+    return state, af, mm, Force, Curvature_Int, Index_Int
 end

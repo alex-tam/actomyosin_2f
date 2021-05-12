@@ -2,7 +2,7 @@
 # Alex Tam, 12/10/2020
 
 "Draw the network configuration"
-function draw_network(s, af, xl, mm, parN, parA, Force, Lxx, Lxy, Lyx, Lyy)
+function draw_network(s, af, mm, parN, parA, Force, Lxx, Lxy, Lyx, Lyy)
     gr(); plot(); # Load GR plotting back-end and clear previous plots
     default(titlefont = (18, "times"), guidefont = (26, "times"), tickfont = (18, "times"))
     # Actin Filaments
@@ -41,21 +41,6 @@ function draw_network(s, af, xl, mm, parN, parA, Force, Lxx, Lxy, Lyx, Lyy)
     scatter!([n1x, n2x], [n1y, n2y], color = "green"); # Plot translated nodes (non-plus-ends)
     scatter!([p1x], [p1y], color = "green"); # Plot translated nodes
     scatter!([p2x], [p2y], color = "black"); # Plot translated nodes (plus ends)
-    # Cross-Links
-    l1x = Vector{Float64}(); l1y = Vector{Float64}(); # Pre-allocate outside loop to plot all  cross-links at once
-    l2x = Vector{Float64}(); l2y = Vector{Float64}();
-    for l in xl
-        # Obtain cross-link positions (dimensionless, un-translated)
-        x1, y1, x2, y2 = get_xl_pos(l, s);
-        # Convert to dimensional, translated positions
-        lx1 = (x1 - l.t1[1])*Lxx + (y1 - l.t1[2])*Lyx;
-        ly1 = (x1 - l.t1[1])*Lxy + (y1 - l.t1[2])*Lyy;
-        lx2 = (x2 - l.t2[1])*Lxx + (y2 - l.t2[2])*Lyx;
-        ly2 = (x2 - l.t2[1])*Lxy + (y2 - l.t2[2])*Lyy;
-        push!(l1x, lx1); push!(l1y, ly1); push!(l2x, lx2); push!(l2y, ly2);
-    end
-    scatter!([l1x, l2x], [l1y, l2y], color = "pink") # Plot cross-link sites as points
-    # plot!(transpose(hcat(l1x, l2x)), transpose(hcat(l1y, l2y)), color = "pink") # Draw cross-linkers
     # Myosin Motors
     m1x = Vector{Float64}(); tm1x = Vector{Float64}(); # Pre-allocate outside loop to plot all motors at once
     m1y = Vector{Float64}(); tm1y = Vector{Float64}();
